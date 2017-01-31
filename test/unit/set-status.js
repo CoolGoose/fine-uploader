@@ -1,4 +1,4 @@
-/* globals describe, beforeEach, qq, qqtest, assert, it */
+/* globals describe, beforeEach, qq, qqtest, assert, helpme, it */
 
 describe("set-status.js", function () {
     "use strict";

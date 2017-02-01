@@ -1,6 +1,6 @@
 /* globals describe, beforeEach, qq, qqtest, assert, helpme, it */
 
-describe("set-status.js", function () {
+describe("set-status.js", function() {
     "use strict";
 
     var testUploadEndpoint = "/test/upload",
@@ -14,7 +14,7 @@ describe("set-status.js", function () {
         uuid: "949d16c3-727a-4c3c-8c0f-23404dcd6f3b"
     }];
 
-    it("testing status change of DELETED with initialFiles", function () {
+    it("testing status change of DELETED with initialFiles", function() {
         var uploader = new qq.FineUploaderBasic();
         uploader.addInitialFiles(initialFiles);
 
@@ -30,7 +30,7 @@ describe("set-status.js", function () {
         assert.equal(qq.status.DELETED, file.status);
     });
 
-    it("testing status change of DELETE_FAILED with initialFiles", function () {
+    it("testing status change of DELETE_FAILED with initialFiles", function() {
         var uploader = new qq.FineUploaderBasic();
         uploader.addInitialFiles(initialFiles);
 
@@ -46,7 +46,7 @@ describe("set-status.js", function () {
         assert.equal(qq.status.DELETE_FAILED, file.status);
     });
 
-    it("testing status change of DELETED with mock uploader", function () {
+    it("testing status change of DELETED with mock uploader", function(done) {
         var uploader = new qq.FineUploaderBasic({
             autoUpload: true,
             request: {
@@ -60,21 +60,23 @@ describe("set-status.js", function () {
             uploader.addFiles({name: "test", blob: blob});
             uploader.uploadStoredFiles();
             fileTestHelper.getRequests()[0].respond(201, null, JSON.stringify({success: true}));
+
+            var uploaderFiles = uploader.getUploads();
+            var file = uploaderFiles[0];
+
+            uploader.setStatus(file.id, qq.status.DELETED);
+
+            uploaderFiles = uploader.getUploads();
+            file = uploaderFiles[0];
+
+            assert.equal(0, uploader.getNetUploads());
+            assert.equal(qq.status.DELETED, file.status);
+            done();
         });
 
-        var uploaderFiles = uploader.getUploads();
-        var file = uploaderFiles[0];
-
-        uploader.setStatus(file.id, qq.status.DELETED);
-
-        uploaderFiles = uploader.getUploads();
-        file = uploaderFiles[0];
-
-        assert.equal(0, uploader.getNetUploads());
-        assert.equal(qq.status.DELETED, file.status);
     });
 
-    it("testing status change of DELETED with mock uploader", function () {
+    it("testing status change of DELETED with mock uploader", function(done) {
         var uploader = new qq.FineUploaderBasic({
             autoUpload: true,
             request: {
@@ -88,18 +90,20 @@ describe("set-status.js", function () {
             uploader.addFiles({name: "test", blob: blob});
             uploader.uploadStoredFiles();
             fileTestHelper.getRequests()[0].respond(201, null, JSON.stringify({success: true}));
+
+            var uploaderFiles = uploader.getUploads();
+            var file = uploaderFiles[0];
+
+            uploader.setStatus(file.id, qq.status.DELETE_FAILED);
+
+            uploaderFiles = uploader.getUploads();
+            file = uploaderFiles[0];
+
+            assert.equal(1, uploader.getNetUploads());
+            assert.equal(qq.status.DELETE_FAILED, file.status);
+            done();
         });
 
-        var uploaderFiles = uploader.getUploads();
-        var file = uploaderFiles[0];
-
-        uploader.setStatus(file.id, qq.status.DELETE_FAILED);
-
-        uploaderFiles = uploader.getUploads();
-        file = uploaderFiles[0];
-
-        assert.equal(1, uploader.getNetUploads());
-        assert.equal(qq.status.DELETE_FAILED, file.status);
     });
 
 });

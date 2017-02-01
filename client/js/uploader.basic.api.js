@@ -415,7 +415,9 @@
                     this._handleDeleteFailed(id);
                     break;
                 default:
-                    this.log("Method setStatus called on '" + name + "' not implemented yet for " + newStatus);
+                    var errorMessage = "Method setStatus called on '" + name + "' not implemented yet for " + newStatus;
+                    this.log(errorMessage);
+                    throw new qq.Error(errorMessage);
             }
         },
 
@@ -1105,16 +1107,14 @@
             this._uploadData.setStatus(id, qq.status.DELETE_FAILED);
             this.log("Delete request for '" + name + "' has failed.", "error");
 
-            // Check first if xhrOrXdr is actually passed since manual status changes don't handle this.
-            if (xhrOrXdr) {
-                // For error reporting, we only have access to the response status if this is not
-                // an `XDomainRequest`.
-                if (xhrOrXdr.withCredentials === undefined) {
-                    this._options.callbacks.onError(id, name, "Delete request failed", xhrOrXdr);
-                }
-                else {
-                    this._options.callbacks.onError(id, name, "Delete request failed with response code " + xhrOrXdr.status, xhrOrXdr);
-                }
+            // Check first if xhrOrXdr is actually passed or valid
+            // For error reporting, we only have access to the response status if this is not
+            // an `XDomainRequest`.
+            if (!xhrOrXdr || xhrOrXdr.withCredentials === undefined) {
+                this._options.callbacks.onError(id, name, "Delete request failed", xhrOrXdr);
+            }
+            else {
+                this._options.callbacks.onError(id, name, "Delete request failed with response code " + xhrOrXdr.status, xhrOrXdr);
             }
         },
 

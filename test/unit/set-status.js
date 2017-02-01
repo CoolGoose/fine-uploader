@@ -26,6 +26,7 @@ describe("set-status.js", function () {
         uploaderFiles = uploader.getUploads();
         file = uploaderFiles[0];
 
+        assert.equal(1, uploader.getNetUploads());
         assert.equal(qq.status.DELETED, file.status);
     });
 
@@ -41,6 +42,7 @@ describe("set-status.js", function () {
         uploaderFiles = uploader.getUploads();
         file = uploaderFiles[1];
 
+        assert.equal(2, uploader.getNetUploads());
         assert.equal(qq.status.DELETE_FAILED, file.status);
     });
 
@@ -68,6 +70,7 @@ describe("set-status.js", function () {
         uploaderFiles = uploader.getUploads();
         file = uploaderFiles[0];
 
+        assert.equal(0, uploader.getNetUploads());
         assert.equal(qq.status.DELETED, file.status);
     });
 
@@ -95,6 +98,7 @@ describe("set-status.js", function () {
         uploaderFiles = uploader.getUploads();
         file = uploaderFiles[0];
 
+        assert.equal(1, uploader.getNetUploads());
         assert.equal(qq.status.DELETE_FAILED, file.status);
     });
 
